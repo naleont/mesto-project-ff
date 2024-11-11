@@ -1,6 +1,5 @@
 import './styles/index.css';
 import { initialCards } from './cards.js';
-import { doc } from 'prettier';
 import { openPopup, closePopup, closePopupClick, closePopupKey } from './components/modal.js'
 import { addCard, deleteCard, addImageButton, likeButtonHandler } from './components/card.js'
 
