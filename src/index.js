@@ -1,7 +1,7 @@
 import './styles/index.css';
 import { initialCards } from './cards.js';
 import { openPopup, closePopup, closePopupClick, closePopupKey } from './components/modal.js'
-import { addCard, deleteCard, addImageButton, likeButtonHandler } from './components/card.js'
+import { addCard, setCardDeleteHandler, setLikeButtonHandler } from './components/card.js'
 
 const placesList = document.querySelector('.places__list');
 
@@ -16,65 +16,83 @@ const formPlaces = document.forms['new-place']
 
 const nameInput = formProfile.name
 const jobInput = formProfile.description
+const profileTitle = document.querySelector('.profile__title');
+const profileDcription = document.querySelector('.profile__description');
+
+const imagePopup = document.querySelector('.popup_type_image');
+const popupImage = imagePopup.querySelector('.popup__image');
+const popupText = imagePopup.querySelector('.popup__caption');
 
 // Вывод карточек на страницу
-function renderCard(cardElement) {
-    placesList.append(cardElement);
+function renderCard(cardElement, method = "prepend") {
+    placesList[ method ](cardElement);
 };
 
 initialCards.forEach (function (item) {
-    const cardElement = addCard(item, deleteCard, addImageButton, likeButtonHandler);
-    renderCard(cardElement);
+    const addCardArgument = {cardInformation: item, 
+        cardDeleteHandler: setCardDeleteHandler, 
+        imageClickHandler: setImageClickHandler, 
+        likeButtonHandler: setLikeButtonHandler
+    }
+    const cardElement = addCard(addCardArgument);
+    renderCard(cardElement, "append");
 });
 
 // Работа с модальными окнами
 function getUserValues() {
-    const userName = document.querySelector('.profile__title').textContent;
-    const userDecription = document.querySelector('.profile__description').textContent;
-    const userForm = document.forms.edit_profile;
-    userForm.elements.name.value = userName;
-    userForm.elements.description.value = userDecription;
+    formProfile.elements.name.value = profileTitle.textContent;
+    formProfile.elements.description.value = profileDcription.textContent;
 }
 
 editButton.addEventListener('click', function() {
-    // const currentPopup = editPopup;
     openPopup(editPopup);
     getUserValues();
-    editPopup.addEventListener('click', closePopupClick);
-    document.addEventListener('keydown', closePopupKey);
 })
 
 addButton.addEventListener('click', function() {
-    // const currentPopup = addPopup;
     openPopup(addPopup);
-    addPopup.addEventListener('click', closePopupClick);
-    document.addEventListener('keydown', closePopupKey);
 })
 
+function setImageClickHandler(cardElement) {
+    const cardImage = cardElement.querySelector('.card__image');
+    cardImage.addEventListener('click', function() {
+
+        popupImage.src = cardImage.src;
+        popupImage.alt = cardImage.alt;
+        popupText.textContent = cardImage.alt;
+
+        openPopup(imagePopup);
+        imagePopup.addEventListener('click', closePopupClick);
+        document.addEventListener('keydown', closePopupKey);
+})}
+
 // Работа с формами
-function editProfileSubmit(evt) {
+function handleProfileFormSubmit(evt) {
     evt.preventDefault();
     const nameValue = nameInput.value;
     const jobValue = jobInput.value;
-    const profileTitle = document.querySelector('.profile__title');
-    const profileDcription = document.querySelector('.profile__description');
     profileTitle.textContent = nameValue;
     profileDcription.textContent = jobValue;
     closePopup(editPopup);
 }
 
-function addPlaceSubmit(evt) {
+function handleCardFormSubmit(evt) {
+    // прошлое название функции addPlaceSubmit начинается с глагола в начальной форме: add - добавлять
     evt.preventDefault();
     const cardInfo = {
         name: formPlaces['place-name'].value,
         link: formPlaces.link.value
     }
-    const cardElement = addCard(cardInfo, deleteCard, addImageButton, likeButtonHandler);
-    placesList.prepend(cardElement);
-    formPlaces['place-name'].value = '';
-    formPlaces.link.value = '';
+    const addCardArgument = {cardInformation: cardInfo, 
+        cardDeleteHandler: setCardDeleteHandler, 
+        imageClickHandler: setImageClickHandler, 
+        likeButtonHandler: setLikeButtonHandler
+    }
+    const cardElement = addCard(addCardArgument);
+    renderCard(cardElement);
+    formPlaces.reset()
     closePopup(addPopup);
 }
 
-formProfile.addEventListener('submit', editProfileSubmit);
-formPlaces.addEventListener('submit', addPlaceSubmit);
+formProfile.addEventListener('submit', handleProfileFormSubmit);
+formPlaces.addEventListener('submit', handleCardFormSubmit);
