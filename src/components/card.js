@@ -11,7 +11,7 @@ function addCard(addCardArgument) {
     cardText.textContent = addCardArgument.cardInformation.name;
 
     addCardArgument.cardDeleteHandler(cardElement);
-    addCardArgument.imageClickHandler(cardElement);
+    addCardArgument.imageClickHandler(cardImage);
     addCardArgument.likeButtonHandler(cardElement);
     return cardElement;
 }

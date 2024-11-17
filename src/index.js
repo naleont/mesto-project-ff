@@ -24,18 +24,19 @@ const popupImage = imagePopup.querySelector('.popup__image');
 const popupText = imagePopup.querySelector('.popup__caption');
 
 // Вывод карточек на страницу
-function renderCard(cardElement, method = "prepend") {
+function renderCard(item, method = "prepend") {
+    const addCardArgument = {
+        cardInformation: item,
+        cardDeleteHandler: setCardDeleteHandler,
+        imageClickHandler: setImageClickHandler,
+        likeButtonHandler: setLikeButtonHandler,
+    };
+    const cardElement = addCard(addCardArgument);
     placesList[ method ](cardElement);
-};
+}
 
 initialCards.forEach (function (item) {
-    const addCardArgument = {cardInformation: item, 
-        cardDeleteHandler: setCardDeleteHandler, 
-        imageClickHandler: setImageClickHandler, 
-        likeButtonHandler: setLikeButtonHandler
-    }
-    const cardElement = addCard(addCardArgument);
-    renderCard(cardElement, "append");
+    renderCard(item, "append");
 });
 
 // Работа с модальными окнами
@@ -53,8 +54,7 @@ addButton.addEventListener('click', function() {
     openPopup(addPopup);
 })
 
-function setImageClickHandler(cardElement) {
-    const cardImage = cardElement.querySelector('.card__image');
+function setImageClickHandler(cardImage) {
     cardImage.addEventListener('click', function() {
 
         popupImage.src = cardImage.src;
@@ -62,9 +62,8 @@ function setImageClickHandler(cardElement) {
         popupText.textContent = cardImage.alt;
 
         openPopup(imagePopup);
-        imagePopup.addEventListener('click', closePopupClick);
-        document.addEventListener('keydown', closePopupKey);
-})}
+    })
+}
 
 // Работа с формами
 function handleProfileFormSubmit(evt) {
@@ -83,13 +82,7 @@ function handleCardFormSubmit(evt) {
         name: formPlaces['place-name'].value,
         link: formPlaces.link.value
     }
-    const addCardArgument = {cardInformation: cardInfo, 
-        cardDeleteHandler: setCardDeleteHandler, 
-        imageClickHandler: setImageClickHandler, 
-        likeButtonHandler: setLikeButtonHandler
-    }
-    const cardElement = addCard(addCardArgument);
-    renderCard(cardElement);
+    renderCard(cardInfo);
     formPlaces.reset()
     closePopup(addPopup);
 }
