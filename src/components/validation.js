@@ -1,11 +1,4 @@
-const validationSettings = {
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_inactive',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'input-error-is-active'
-}
-const formList = Array.from(document.querySelectorAll('.popup__form'));
+import { validationSettings } from '../index.js';
 
 function hasInvalidInput(inputList) {
     return inputList.some((inputElement) => {
@@ -72,6 +65,7 @@ function setEventListeners(formElement, validationSettings) {
 };
 
 function enableValidation(validationSettings) {
+    const formList = Array.from(document.querySelectorAll(validationSettings.formSelector));
     formList.forEach((formElement) => {
         setEventListeners(formElement, validationSettings);
     });
@@ -79,12 +73,15 @@ function enableValidation(validationSettings) {
 
 function clearValidation(formElement, validationSettings) {
     const inputList = Array.from(formElement.querySelectorAll(validationSettings.inputSelector));
-    
+    const submitButtonElement = formElement.querySelector(validationSettings.submitButtonSelector);
+
     inputList.forEach((inputElement) => {
         hideInputError({formElement: formElement, 
             inputElement: inputElement, 
             validationSettings: validationSettings});
     })
+
+    toggleSubmitButtonState(inputList, submitButtonElement, validationSettings)
 }
 
-export { validationSettings, toggleSubmitButtonState, enableValidation, clearValidation }
+export { toggleSubmitButtonState, enableValidation, clearValidation }

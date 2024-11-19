@@ -10,119 +10,93 @@ const fetchConfig = {
     }
 }
 
-const profileInfoPromise = new Promise((resolve, reject) => {
-    return fetch(fetchConfig.baseURL + '/users/me', {
-        headers: fetchConfig.headers
-    })
+function handleResponse(request, resolve, reject) {
+    request
     .then((res) => {
-        if (res.ok) {
-            resolve(res.json())
-        } else {
-            reject(`Ошибка: ${res.status}`)
+        if (res.ok) { 
+            resolve(res.json()) 
+        } else { 
+            reject(`Ошибка: ${res.status}`) 
         }
     })
-    .catch((err) => {
-        console.log(err);
+}
+
+const profileInfoPromise = new Promise((resolve, reject) => {
+    const request = fetch(fetchConfig.baseURL + '/users/me', {
+        headers: fetchConfig.headers
     })
+    handleResponse(request, resolve, reject)
 });
 
 const cardsInfoPromise = new Promise((resolve, reject) => {
-    return fetch(fetchConfig.baseURL + '/cards', {
+    const request = fetch(fetchConfig.baseURL + '/cards', {
         headers: fetchConfig.headers
     })
-    .then((res) => {
-        if (res.ok) {
-            resolve(res.json())
-        } else {
-            reject(`Ошибка: ${res.status}`)
-        }
-    })
-    .catch((err) => {
-        console.log(err);
-    })
+    handleResponse(request, resolve, reject)
 })
 
 function saveProfileRequest(nameValue, jobValue) {
-    return fetch(fetchConfig.baseURL + '/users/me', {
-        method: 'PATCH',
-        headers: fetchConfig.headers,
-        body: JSON.stringify({
-            name: nameValue,
-            about: jobValue
+    const saveProfilePromise = new Promise((resolve, reject) => {
+        const request = fetch(fetchConfig.baseURL + '/users/me', {
+            method: 'PATCH',
+            headers: fetchConfig.headers,
+            body: JSON.stringify({
+                name: nameValue,
+                about: jobValue
+            })
         })
+        handleResponse(request, resolve, reject)
     })
+    return saveProfilePromise
 }
 
 function addCardRequest(cardInfo) {
     const newPromise = new Promise((resolve, reject) => {
-        fetch(fetchConfig.baseURL + '/cards', {
+        const request = fetch(fetchConfig.baseURL + '/cards', {
             method: 'POST',
             headers: fetchConfig.headers,
             body: JSON.stringify(cardInfo)
         })
-        .then((res) => {
-            if (res.ok) {
-                resolve(res.json())
-            } else {
-                reject(`Ошибка: ${res.status}`)
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        handleResponse(request, resolve, reject)
     })
     return newPromise
 }
 
 function saveAvatarRequest(newPhoto) {
     const profilePhotoPromise = new Promise((resolve, reject) => {
-        fetch(fetchConfig.baseURL + '/users/me/avatar', {
+        const request = fetch(fetchConfig.baseURL + '/users/me/avatar', {
             method: 'PATCH',
             headers: fetchConfig.headers,
             body: JSON.stringify({
                 avatar: newPhoto
             })
         })
-        .then((res) => {
-            if (res.ok) {
-                resolve(res.json())
-            } else {
-                reject(`Ошибка: ${res.status}`)
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        handleResponse(request, resolve, reject)
     })
     return profilePhotoPromise
 }
 
-function likeCardRequest(cardId, method) {
+function likeCardRequest(cardId, isLiked) {
+    const method = isLiked ? 'PUT' : 'DELETE'
     const likePromise = new Promise((resolve, reject) => {
-        fetch(fetchConfig.baseURL + '/cards/likes/' + cardId, {
+        const request = fetch(fetchConfig.baseURL + '/cards/likes/' + cardId, {
             method: method,
             headers: fetchConfig.headers
         })
-        .then((res) => {
-            if (res.ok) {
-                resolve(res.json())
-            } else {
-                reject(`Ошибка: ${res.status}`)
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        handleResponse(request, resolve, reject)
     })
-
     return likePromise
 }
 
 function deleteCardRequest(cardId) {
-    return fetch(fetchConfig.baseURL + '/cards/' + cardId, {
-        method: 'DELETE',
-        headers: fetchConfig.headers
-        })
+    const deleteCardPromise = new Promise((resolve, reject) => {
+        const request =  fetch(fetchConfig.baseURL + '/cards/' + cardId, {
+            method: 'DELETE',
+            headers: fetchConfig.headers
+            })
+        handleResponse(request, resolve, reject)
+    })
+    return deleteCardPromise
 }
 
 
