@@ -7,6 +7,20 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
+}
+
+.profile__image:hover::after {
+  content: url('../../../images/pencil.svg');
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  inset: auto;
+  cursor: pointer;
+  height: 120px;
+  width: 120px;
+  background: #000000CC;
 }
 
 @media screen and (max-width: 740px) {
